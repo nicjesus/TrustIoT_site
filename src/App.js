@@ -6,10 +6,19 @@ export default function App() {
   return (
     <div className="min-h-screen bg-[#0b1120] text-white font-inter">
       {/* Navbar */}
-      <nav className="flex justify-between items-center p-6 border-b border-gray-700">
-        <h1 className="text-2xl font-bold text-[#00FFB2]">TrustIoT</h1>
+      <nav className="flex flex-col md:flex-row md:justify-between md:items-center p-4 md:p-6 border-b border-gray-700 text-center md:text-left gap-4 md:gap-0">
+
+        {/* Logo */}
+        <div className="flex items-center justify-center">
+	 <img
+          src="/logo_cortada.png"
+          alt="TrustIoT Logo"
+          className="max-h-12 md:max-h-14 w-auto object-contain"
+	/>
+	</div>
+
         <div className="space-x-6">
-          <a href="#about" className="hover:text-[#00FFB2]">Sobre</a>
+          <a href="#about" className="hover:text-[#01FFB2]">Sobre</a>
           <a href="#how" className="hover:text-[#00FFB2]">Como Funciona</a>
           <a href="#demo" className="hover:text-[#00FFB2]">Demo</a>
           <a href="#team" className="hover:text-[#00FFB2]">Equipe</a>
@@ -18,12 +27,21 @@ export default function App() {
       </nav>
 
       {/* Hero Section */}
-      <section className="text-center py-28 px-4">
+      <section className="text-center py-20 px-6 md:py-28 md:px-12">
+        {/* Logo grande no hero */}
+        <motion.img
+          src="/logo_cortada.png"
+          alt="TrustIoT Logo"
+          className="mx-auto mb-8 h-32 md:h-60 w-auto drop-shadow-[0_0_25px_#00FFB2]"
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 1 }}
+        />
         <motion.h2
           initial={{ opacity: 0, y: -30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 1 }}
-          className="text-4xl md:text-6xl font-bold mb-6"
+          className="text-4xl md:text-6xl font-bold mb-6 relative inline-block bg-gradient-to-r from-[#00FFB2] via-white to-[#00FFB2] bg-[length:200%_200%] text-transparent bg-clip-text animate-shine pb-2"
         >
           Segurança e Integridade para o Futuro da IoT
         </motion.h2>
@@ -50,7 +68,7 @@ export default function App() {
       {/* How It Works */}
       <section id="how" className="py-24 px-6">
         <h3 className="text-center text-3xl font-bold mb-12 text-[#00FFB2]">Como Funciona</h3>
-        <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6 md:gap-10 max-w-6xl mx-auto px-4">
           <div className="bg-[#1e293b] p-6 rounded-2xl shadow-lg text-center">
             <Cpu size={48} className="mx-auto text-[#00FFB2] mb-4" />
             <h4 className="font-semibold text-xl mb-2">Coleta IoT</h4>
@@ -81,7 +99,7 @@ export default function App() {
       {/* Team */}
       <section id="team" className="py-24 px-6">
         <h3 className="text-center text-3xl font-bold mb-10 text-[#00FFB2]">Equipe</h3>
-        <div className="max-w-4xl mx-auto grid md:grid-cols-2 gap-8 text-center">
+        <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 text-center px-4">
           <div className="bg-[#1e293b] p-6 rounded-2xl">
             <h4 className="text-xl font-semibold">Nicolas Carregosa de Jesus</h4>
             <p className="text-gray-400">Engenharia de Redes - Universidade de Brasília</p>
@@ -96,14 +114,14 @@ export default function App() {
       {/* Footer */}
       <footer id="contact" className="bg-[#020617] py-10 text-center border-t border-gray-800">
         <p className="text-gray-400 mb-4">
-          Entre em contato: <a href="mailto:nicolas@unb.br" className="text-[#00FFB2]">nicolas@unb.br</a>
+          Entre em contato: <a href="mailto:241024535@aluno.unb.br" className="text-[#00FFB2]">nicolas@unb.br</a>
         </p>
         <div className="flex justify-center gap-6">
           <a href="https://github.com" className="hover:text-[#00FFB2]" target="_blank" rel="noreferrer">
             <Github />
           </a>
         </div>
-        <p className="text-gray-600 mt-6 text-sm">© 2025 TrustIoT - Projeto Transversal UnB</p>
+        <p className="text-gray-600 mt-6 text-sm">© 2025 TrustIoT - Projeto Transversal de Redes - UnB</p>
       </footer>
     </div>
   );
