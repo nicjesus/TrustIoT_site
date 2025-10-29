@@ -1,6 +1,8 @@
+import DemoBlockchain from "./components/DemoBlockchain";
 import React from "react";
 import { motion } from "framer-motion";
 import { Shield, Network, Cpu, Github, Mail } from "lucide-react";
+import Dashboard from "./components/Dashboard";
 
 // Wrapper para seções com animação de entrada
 const AnimatedSection = ({ children, id, className = "" }) => {
@@ -142,30 +144,21 @@ export default function App() {
         </div>
       </AnimatedSection>
 
-      {/* Demo */}
+     {/* Demo */}
       <AnimatedSection id="demo" className="bg-slate-900/50 text-center">
-        <h2 className="text-3xl font-bold mb-10 text-teal-400">Demonstração</h2>
-        <p className="text-slate-400 mb-8 max-w-2xl mx-auto">Um painel de controle em tempo real está sendo desenvolvido para visualizar os dados dos sensores e as transações na blockchain.</p>
-        <div className="border-2 border-dashed border-slate-700 rounded-xl p-8 max-w-4xl mx-auto bg-slate-950/40">
-            <div className="flex flex-col md:flex-row gap-6">
-                <div className="flex-1 bg-slate-800/50 rounded-lg p-4 animate-pulse">
-                    <div className="h-6 bg-slate-700 rounded w-3/4 mb-4"></div>
-                    <div className="h-10 bg-slate-700 rounded w-1/2"></div>
-                </div>
-                 <div className="flex-1 bg-slate-800/50 rounded-lg p-4 animate-pulse" style={{ animationDelay: '0.2s'}}>
-                    <div className="h-6 bg-slate-700 rounded w-3/4 mb-4"></div>
-                    <div className="h-10 bg-slate-700 rounded w-1/2"></div>
-                </div>
-            </div>
-            <div className="mt-6 bg-slate-800/50 rounded-lg p-4 h-48 animate-pulse" style={{ animationDelay: '0.4s'}}></div>
-        </div>
+        <h2 className="text-3xl font-bold mb-10 text-teal-400">Demonstração Blockchain</h2>
+        <p className="text-slate-400 mb-8 max-w-2xl mx-auto">
+    Interaja com o contrato TrustIoT implantado na rede Sepolia — registre e verifique dispositivos IoT.
+  </p>
+
+  <DemoBlockchain />
       </AnimatedSection>
 
       {/* Team */}
       <AnimatedSection id="team">
         <h2 className="text-center text-3xl font-bold mb-10 text-teal-400">Equipe</h2>
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-8 text-center">
-           <motion.div className="bg-slate-900 p-6 rounded-2xl border border-slate-800">
+          <motion.div className="bg-slate-900 p-6 rounded-2xl border border-slate-800">
             <h3 className="text-xl font-semibold text-slate-100">Nicolas Carregosa de Jesus</h3>
             <p className="text-slate-400">Engenharia de Redes - Universidade de Brasília</p>
           </motion.div>
@@ -179,17 +172,28 @@ export default function App() {
       {/* Footer */}
       <footer id="contact" className="bg-slate-950 py-10 text-center border-t border-slate-800">
         <div className="flex justify-center items-center gap-6 mb-6">
-          <a href="https://github.com/seu-usuario/trustiot" className="text-slate-400 hover:text-teal-400 transition-colors" target="_blank" rel="noreferrer">
+          <a
+            href="https://github.com/nicjesus/TrustIoT_site"
+            className="text-slate-400 hover:text-teal-400 transition-colors"
+            target="_blank"
+            rel="noreferrer"
+          >
             <Github size={28} />
           </a>
-          <a href="mailto:241024535@aluno.unb.br" className="text-slate-400 hover:text-teal-400 transition-colors">
+          <a
+            href="mailto:241024535@aluno.unb.br"
+            className="text-slate-400 hover:text-teal-400 transition-colors"
+          >
             <Mail size={28} />
           </a>
         </div>
-        <p className="text-slate-500 text-sm">© {new Date().getFullYear()} TrustIoT - Projeto Transversal de Redes - UnB</p>
+        <p className="text-slate-500 text-sm">
+          © {new Date().getFullYear()} TrustIoT - Projeto Transversal de Redes - UnB
+        </p>
       </footer>
     </div>
   );
 }
+
 
 
