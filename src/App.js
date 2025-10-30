@@ -86,7 +86,7 @@ export default function App() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5 }}
-          className="text-4xl md:text-6xl font-bold my-6 bg-gradient-to-r from-slate-100 to-teal-400 bg-clip-text text-transparent leading-tight pb-1"
+          className="text-4xl md:text-6xl font-bold my-6 bg-gradient-to-r from-slate-100 to-teal-400 bg-clip-text text-transparent leading-tight pb-4"
         >
           Segurança e Integridade para o Futuro da IoT
         </motion.h1>
