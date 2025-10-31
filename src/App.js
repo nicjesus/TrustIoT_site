@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { Shield, Network, Cpu, Github, Mail } from "lucide-react";
 import Dashboard from "./components/Dashboard";
 
+
 // Wrapper para seções com animação de entrada
 const AnimatedSection = ({ children, id, className = "" }) => {
   return (
@@ -86,7 +87,7 @@ export default function App() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.7, delay: 0.5 }}
-          className="text-4xl md:text-6xl font-bold my-6 bg-gradient-to-r from-slate-100 to-teal-400 bg-clip-text text-transparent leading-tight pb-1"
+          className="text-4xl md:text-6xl font-bold my-6 bg-gradient-to-r from-slate-100 to-teal-400 bg-clip-text text-transparent leading-tight pb-4"
         >
           Segurança e Integridade para o Futuro da IoT
         </motion.h1>
