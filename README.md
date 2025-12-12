@@ -238,14 +238,3 @@ Feel free to open issues or extend the architecture.
 ## 📝 **License**
 
 This project is licensed under the **MIT License**.
-
----
-
-If quiser, posso:
-
-✅ Criar um **logo oficial** pro TrustIoT
-✅ Gerar **diagramas em SVG** da arquitetura
-✅ Criar **badges personalizados** (ex: Powered by Blockchain, IoT Ready)
-✅ Gerar uma **versão reduzida para LinkedIn**
-
-Só pedir!
