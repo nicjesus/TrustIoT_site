@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { ethers } from "ethers";
 import IoTGraph from "./IoTGraph";
 import TransactionLog from "./TransactionLog";
-import contractData from "../TrustIoT.json";
 import Dashboard from "./Dashboard";
+import { getBlockchain } from "../blockchain";
+import contractData from "../TrustIoT.json";
+import UserDashboard from "./UserDashboard";
+
+   // ⬅ usar só isso!
 
 export default function DemoBlockchain() {
   const [account, setAccount] = useState(null);
@@ -12,148 +15,188 @@ export default function DemoBlockchain() {
   const [records, setRecords] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [mac, setMac] = useState("");
 
-  // ✅ Conecta à carteira MetaMask
+  // -----------------------------
+  // 1. Conectar MetaMask
+  // -----------------------------
   const connectWallet = async () => {
     try {
-      if (!window.ethereum) {
-        alert("MetaMask não detectada!");
-        return;
-      }
+      if (!window.ethereum) return alert("MetaMask não encontrada!");
 
       const accounts = await window.ethereum.request({
         method: "eth_requestAccounts",
       });
 
-      if (accounts.length === 0) {
-        alert("Nenhuma conta encontrada!");
-        return;
-      }
-
       setAccount(accounts[0]);
-      alert(`✅ Conectado: ${accounts[0].slice(0, 6)}...${accounts[0].slice(-4)}`);
-    } catch (error) {
-      console.error("Erro ao conectar MetaMask:", error);
-      alert("Erro ao conectar MetaMask. Veja o console para detalhes.");
+      alert(`🔗 Conectado: ${accounts[0]}`);
+
+      loadMyDevices(accounts[0]);
+    } catch (e) {
+      console.error(e);
     }
   };
 
-  // ✅ Registrar dispositivo no contrato
-  const registerDevice = async () => {
+  // -----------------------------
+  // 2. Buscar devices do dono
+  // -----------------------------
+  const loadMyDevices = async (userAddr = account) => {
     try {
-      if (!window.ethereum || !account) {
-        alert("Conecte sua carteira antes!");
-        return;
-      }
-      if (!deviceId || !hashData) {
-        alert("Preencha o ID e o hash dos dados!");
-        return;
+      const contract = await getBlockchain();
+      if (!contract || !userAddr) return;
+
+      const devices = await contract.getDevicesByOwner(userAddr);
+
+      const all = [];
+      for (let id of devices) {
+        const rec = await contract.getRecord(id);
+        if (rec.deviceId) all.push(rec);
       }
 
+      setRecords(all);
+    } catch (e) {
+      console.error("Erro ao carregar dispositivos:", e);
+    }
+  };
+
+  // -----------------------------
+  // 3. Registrar novo dispositivo
+  // -----------------------------
+  const registerDevice = async () => {
+    if (!account) return alert("Conecte sua carteira!");
+    if (!deviceId || !hashData) return alert("Preencha os campos!");
+
+    try {
       setLoading(true);
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const signer = await provider.getSigner();
-      const contract = new ethers.Contract(contractData.address, contractData.abi, signer);
+      const contract = await getBlockchain();
+      if (!contract) return;
 
       const tx = await contract.registerDevice(deviceId, hashData);
       await tx.wait();
 
-      const timestamp = Math.floor(Date.now() / 1000);
-      setTransactions((prev) => [{ deviceId, txHash: tx.hash, timestamp }, ...prev]);
+      setTransactions((prev) => [
+        { deviceId, txHash: tx.hash, timestamp: Date.now() },
+        ...prev,
+      ]);
 
-      alert("✅ Dispositivo registrado com sucesso!");
-    } catch (error) {
-      console.error("Erro ao registrar dispositivo:", error);
-      alert("Erro ao registrar dispositivo. Veja o console.");
+      alert("🎉 Registrado com sucesso!");
+      loadMyDevices();
+    } catch (e) {
+      console.error(e);
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ Consultar dados do contrato
+  // -----------------------------
+  // 4. Consulta manual
+  // -----------------------------
   const getRecord = async () => {
     try {
-      if (!window.ethereum) {
-        alert("MetaMask não detectada!");
-        return;
-      }
-      if (!deviceId) {
-        alert("Informe o ID do dispositivo!");
-        return;
-      }
-
       setLoading(true);
-      const provider = new ethers.BrowserProvider(window.ethereum);
-      const contract = new ethers.Contract(contractData.address, contractData.abi, provider);
+      const contract = await getBlockchain();
+      if (!contract) return;
 
-      const record = await contract.getRecord(deviceId);
-      if (record && record.deviceId) {
-        setRecords((prev) => [record, ...prev]);
+      const rec = await contract.getRecord(deviceId);
+
+      if (rec && rec.deviceId) {
+        setRecords((prev) => [rec, ...prev]);
       } else {
-        alert("Nenhum registro encontrado para este ID.");
+        alert("Nenhum registro encontrado.");
       }
-    } catch (error) {
-      console.error("Erro ao buscar registro:", error);
-      alert("Erro ao buscar registro. Veja o console.");
+    } catch (e) {
+      console.error(e);
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ UI principal
+  // -----------------------------
+  // 5. MAC → DeviceID
+  // -----------------------------
+  const generateDeviceId = () => {
+    if (!mac || mac.length < 17)
+      return alert("MAC inválido! Use AA:BB:CC:DD:EE:FF");
+
+    const clean = mac.replace(/:/g, "").toLowerCase();
+    const ipv6 = `fd00:${clean.slice(0, 4)}:${clean.slice(4, 8)}:${clean.slice(8, 12)}::1`;
+
+    setDeviceId(ipv6);
+    alert("DeviceID gerado!");
+  };
+
+  // -----------------------------
+  // UI
+  // -----------------------------
   return (
     <div className="max-w-4xl mx-auto p-6 bg-slate-950/50 rounded-xl border border-slate-800">
+
       {!account ? (
-        <button
-          onClick={connectWallet}
-          className="bg-teal-400 text-slate-900 font-semibold px-6 py-3 rounded-lg hover:bg-teal-300 transition"
-        >
+        <button onClick={connectWallet}
+          className="bg-teal-400 px-6 py-3 rounded-lg text-black font-bold">
           Conectar MetaMask
         </button>
       ) : (
         <>
-          <p className="text-slate-400 mb-6">Conectado: {account}</p>
+          <p className="text-slate-300 mb-4">Conectado: {account}</p>
 
-          <div className="flex flex-col md:flex-row gap-4 justify-center">
+          <button
+            onClick={() => loadMyDevices()}
+            className="bg-purple-500 text-white px-4 py-2 rounded-lg mb-4">
+            🔄 Atualizar dispositivos
+          </button>
+
+          {/* Inputs */}
+          <div className="flex flex-col md:flex-row gap-4">
             <input
               value={deviceId}
               onChange={(e) => setDeviceId(e.target.value)}
-              placeholder="ID do dispositivo"
-              className="p-3 rounded-md bg-slate-800 border border-slate-700 text-white flex-1"
+              placeholder="DeviceID"
+              className="p-3 bg-slate-800 text-white rounded-md border border-slate-700 flex-1"
             />
             <input
               value={hashData}
               onChange={(e) => setHashData(e.target.value)}
-              placeholder="Hash dos dados"
-              className="p-3 rounded-md bg-slate-800 border border-slate-700 text-white flex-1"
+              placeholder="Hash"
+              className="p-3 bg-slate-800 text-white rounded-md border border-slate-700 flex-1"
             />
           </div>
 
+          {/* MAC → DeviceID */}
+          <div className="mt-6 bg-slate-900 p-4 rounded-lg border border-slate-700">
+            <h3 className="text-teal-300 font-bold mb-2">Gerar DeviceID (MAC → IPv6)</h3>
+
+            <div className="flex flex-col md:flex-row gap-4">
+              <input
+                value={mac}
+                onChange={(e) => setMac(e.target.value)}
+                placeholder="AA:BB:CC:DD:EE:FF"
+                className="p-3 bg-slate-800 text-white border border-slate-700 rounded-md flex-1"
+              />
+              <button
+                onClick={generateDeviceId}
+                className="bg-purple-500 text-white px-6 py-3 rounded-lg">
+                Gerar
+              </button>
+            </div>
+          </div>
+
+          {/* Botões */}
           <div className="mt-6 flex gap-4 justify-center">
-            <button
-              onClick={registerDevice}
-              disabled={loading}
-              className={`${
-                loading ? "opacity-50 cursor-not-allowed" : "hover:bg-teal-300"
-              } bg-teal-400 text-slate-900 font-semibold px-6 py-3 rounded-lg transition`}
-            >
+            <button onClick={registerDevice}
+              className="bg-teal-400 px-6 py-3 rounded-lg text-black font-bold">
               Registrar
             </button>
-            <button
-              onClick={getRecord}
-              disabled={loading}
-              className={`${
-                loading ? "opacity-50 cursor-not-allowed" : "hover:bg-slate-600"
-              } bg-slate-700 text-white font-semibold px-6 py-3 rounded-lg transition`}
-            >
+            <button onClick={getRecord}
+              className="bg-slate-700 px-6 py-3 rounded-lg text-white">
               Consultar
             </button>
           </div>
 
-          {/* Renderiza os componentes corretamente como JSX */}
           <IoTGraph data={records} />
           <TransactionLog transactions={transactions} />
           <Dashboard records={records} />
+          <UserDashboard account={account} />
         </>
       )}
     </div>
